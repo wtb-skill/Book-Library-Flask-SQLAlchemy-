@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+
+{% block head %}
+    <title>Books</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="list-group">
+  {% for book in books %}
+    <a href="{{ url_for('books_details', book_id=book.id) }}" class="list-group-item list-group-item-action">{{ book.title }}</a>
+  {% endfor %}
+</div>
+
+
+{% endblock %}

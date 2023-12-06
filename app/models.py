@@ -1,9 +1,10 @@
 # app/models.py
 from app import db
 
+
 book_authors = db.Table(
     'book_authors',
-    db.Column('book_id', db.Integer, db.ForeignKey('book.id'), primary_key=True),
+    db.Column('books_id', db.Integer, db.ForeignKey('book.id'), primary_key=True),
     db.Column('author_id', db.Integer, db.ForeignKey('author.id'), primary_key=True)
 )
 
@@ -15,6 +16,9 @@ class Book(db.Model):
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
 
     authors = db.relationship('Author', secondary=book_authors, backref=db.backref('books', lazy='dynamic'))
+
+    # Define the relationship with Status
+    status = db.relationship('Status', backref='book_status', lazy=True)
 
     def __str__(self):
         return f"<Book {self.title}>"
@@ -34,10 +38,10 @@ class Status(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     available = db.Column(db.Boolean, default=True)
     borrower_name = db.Column(db.String(100))
-    borrowed_date = db.Column(db.DateTime)
+    borrowed_date = db.Column(db.String(100))
 
-    books = db.relationship('Book', backref='status', lazy=True)
-
+    books = db.relationship('Book', backref='status_books', lazy=True)
+    
     def __str__(self):
         if self.available:
             return "<Status: Available>"

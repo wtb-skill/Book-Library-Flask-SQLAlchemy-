@@ -1,0 +1,12 @@
+        <div class="mb-3">
+            <label for="authors" class="form-label">Authors</label>
+            <select multiple class="form-select" id="authors" name="authors[]" required>
+                {% for author in all_authors %}
+                    {% if author in book.authors %}
+                        <option value="{{ author.id }}" selected>{{ author.name }} {{ author.surname }}</option>
+                    {% else %}
+                        <option value="{{ author.id }}">{{ author.name }} {{ author.surname }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>

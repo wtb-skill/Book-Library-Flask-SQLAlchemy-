@@ -44,11 +44,11 @@ def upgrade():
         batch_op.create_index(batch_op.f('ix_book_title'), ['title'], unique=True)
 
     op.create_table('book_authors',
-    sa.Column('book_id', sa.Integer(), nullable=False),
+    sa.Column('books_id', sa.Integer(), nullable=False),
     sa.Column('author_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['author_id'], ['author.id'], ),
-    sa.ForeignKeyConstraint(['book_id'], ['book.id'], ),
-    sa.PrimaryKeyConstraint('book_id', 'author_id')
+    sa.ForeignKeyConstraint(['books_id'], ['book.id'], ),
+    sa.PrimaryKeyConstraint('books_id', 'author_id')
     )
     # ### end Alembic commands ###
 

@@ -1,10 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "index.html" %}
 
-</body>
-</html>
+{% block head %}
+    <title>Book Details</title>
+{% endblock %}
+
+{% block content %}
+
+{% include "alert.html" %}
+
+    <h2>Book Details</h2>
+
+    <form method="POST">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ book.title }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required>{{ book.description }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                {% if book.status.available %}
+                    <option value="available" selected>Available</option>
+                    <option value="borrowed">Borrowed</option>
+                {% else %}
+                    <option value="available">Available</option>
+                    <option value="borrowed" selected>Borrowed</option>
+                {% endif %}
+            </select>
+        </div>
+
+        <div class="mb-3" id="borrowerDetails">
+            <label for="borrower_name" class="form-label">Borrower Name</label>
+            <input type="text" class="form-control" id="borrower_name" name="borrower_name" value="{{ book.status.borrower_name }}" {% if book.status.available %} disabled {% endif %}>
+        </div>
+
+        <div class="mb-3" id="borrowedDateDetails">
+            <label for="borrowed_date" class="form-label">Borrowed Date</label>
+            <input type="text" class="form-control" id="borrowed_date" name="borrowed_date" value="{{ book.status.borrowed_date }}" {% if book.status.available %} disabled {% endif %}>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const statusDropdown = document.getElementById('status');
+                const borrowerDetails = document.getElementById('borrowerDetails');
+                const borrowedDateDetails = document.getElementById('borrowedDateDetails');
+
+                // Function to toggle visibility of borrower details based on status
+                function toggleBorrowerDetails() {
+                    if (statusDropdown.value === 'borrowed') {
+                        borrowerDetails.style.display = 'block';
+                        borrowerDetails.querySelector('input').disabled = false;
+                        borrowedDateDetails.style.display = 'block';
+                        borrowedDateDetails.querySelector('input').disabled = false;
+                    } else {
+                        borrowerDetails.style.display = 'none';
+                        borrowerDetails.querySelector('input').disabled = true;
+                        borrowedDateDetails.style.display = 'none';
+                        borrowedDateDetails.querySelector('input').disabled = true;
+                    }
+                }
+
+                // Initial check on load
+                toggleBorrowerDetails();
+
+                // Listen for changes in status dropdown
+                statusDropdown.addEventListener('change', toggleBorrowerDetails);
+            });
+        </script>
+
+    </form>
+    <a href="{{ url_for('books') }}" class="btn btn-secondary">Back to Books</a>
+{% endblock %}
