@@ -75,7 +75,23 @@ def authors():
 
 @app.route('/')
 def homepage():
-    return render_template("index.html")
+    # Define the API structure
+    api_structure = {
+        'Books': {
+            'GET': '/books',
+            'POST': '/books/add',
+            'GET by ID': '/books/{book_id}',
+            'POST by ID': '/books/{book_id}',
+        },
+        'Authors': {
+            'GET': '/authors',
+            'GET by ID': '/authors/{author_id}',
+            'POST by ID': '/authors/{author_id}',
+        },
+        # Add more API structures as needed
+    }
+
+    return render_template("homepage.html", api_structure=api_structure)
 
 
 @app.route('/books/<int:book_id>', methods=['GET', 'POST'])

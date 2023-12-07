@@ -1,0 +1,35 @@
+{% extends "index.html" %}
+
+{% block head %}
+    <title>Homepage</title>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Left column content -->
+                <div class="container">
+                    <h1>API Structure</h1>
+                    <ul>
+                        {% for category, endpoints in api_structure.items() %}
+                            <li>
+                                <h2>{{ category }}</h2>
+                                <ul>
+                                    {% for method, endpoint in endpoints.items() %}
+                                        <li><strong>{{ method }}</strong>: {{ endpoint }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- Right column content -->
+                <img src="{{ url_for('static', filename='open_book.jpg') }}" class="img-fluid" alt="Open Book">
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
