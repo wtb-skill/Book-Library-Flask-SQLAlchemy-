@@ -1,0 +1,79 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+{% include "alert.html" %}
+
+<form method="POST" action="/books/add" id="bookForm">
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+    </div>
+
+    <!-- Author section for the first author -->
+    <div class="author-section">
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="mb-3">
+            <label for="surname" class="form-label">Surname</label>
+            <input type="text" class="form-control" id="surname" name="surname" required>
+        </div>
+        <div class="mb-3">
+            <label for="bio" class="form-label">Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="3" required></textarea>
+        </div>
+    </div>
+
+    <!-- Button to add more authors -->
+    <button type="button" class="btn btn-secondary" id="addAuthorBtn">Add Another Author</button>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("bookForm");
+        const addAuthorBtn = document.getElementById("addAuthorBtn");
+        const authorSection = document.querySelector(".author-section");
+
+        let authorCount = 1; // Counter to keep track of added authors
+
+        addAuthorBtn.addEventListener("click", function() {
+            if (authorCount < 3) { // Allowing up to 3 additional authors
+                authorCount++;
+
+                // Create divs for new author inputs
+                const newAuthorDiv = document.createElement("div");
+                newAuthorDiv.classList.add("author-section");
+
+                const html = `
+                    <div class="mb-3">
+                        <label for="name${authorCount}" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name${authorCount}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="surname${authorCount}" class="form-label">Surname</label>
+                        <input type="text" class="form-control" name="surname${authorCount}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bio${authorCount}" class="form-label">Bio</label>
+                        <textarea class="form-control" name="bio${authorCount}" rows="3" required></textarea>
+                    </div>
+                `;
+
+                newAuthorDiv.innerHTML = html;
+                form.insertBefore(newAuthorDiv, addAuthorBtn);
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+

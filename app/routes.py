@@ -6,40 +6,81 @@ from app.models import Book, Status, Author
 from datetime import datetime
 
 
-@app.route('/', methods=['GET', 'POST'])
-def homepage():
+@app.route('/books/add', methods=['GET', 'POST'])
+def add_book():
     if request.method == 'POST':
-        # Fetch data from the form
         title = request.form['title']
         description = request.form['description']
 
-        # Create a new Book object
+        # Create the book and status
         new_book = Book(title=title, description=description)
-
-        # Create a new Status object for the new book
         new_status = Status(available=True, borrower_name=None, borrowed_date=None)
 
         try:
-            # Add the book and status to the database session
+            # Add the new_book and new_status to the session
             db.session.add(new_book)
             db.session.add(new_status)
 
-            # Establish the relationship between book and status
+            # Loop through form data to get author information
+            authors = []
+            for key in request.form.keys():
+                if key.startswith('name'):
+                    author_num = key.replace('name', '')
+                    name = request.form[f'name{author_num}']
+                    surname = request.form[f'surname{author_num}']
+                    bio = request.form[f'bio{author_num}']
+
+                    # Create author objects
+                    author = Author(name=name, surname=surname, bio=bio)
+                    authors.append(author)
+                    db.session.add(author)
+
+                    # Associate the author with the new_book
+                    new_book.authors.extend(authors)
+
+            # Set the status of the new_book
             new_book.status = new_status
 
             # Commit changes to the database
             db.session.commit()
 
             flash('Book added successfully!')
-            return redirect(url_for('homepage'))
+            return redirect(url_for('add_book'))
 
         except Exception as e:
             flash(f'Error adding book: {str(e)}')
-            return redirect(url_for('homepage'))
+            return redirect(url_for('add_book'))
 
-    # Fetch all books from the database
-    all_books = Book.query.all()
-    return render_template("home.html", books=all_books)
+    return render_template("add_book.html")
+
+
+# OLD
+# @app.route('/books/add', methods=['GET', 'POST'])
+# def add_book():
+#     if request.method == 'POST':
+#         title = request.form['title']
+#         description = request.form['description']
+#
+#         # Create the book and status
+#         new_book = Book(title=title, description=description)
+#         new_status = Status(available=True, borrower_name=None, borrowed_date=None)
+#
+#         try:
+#             db.session.add(new_book)
+#             db.session.add(new_status)
+#
+#             new_book.status = new_status
+#             db.session.commit()
+#
+#             flash('Book added successfully!')
+#             return redirect(url_for('add_book'))
+#
+#         except Exception as e:
+#             flash(f'Error adding book: {str(e)}')
+#             return redirect(url_for('add_book'))
+#
+#     all_books = Book.query.all()
+#     return render_template("add_book.html", books=all_books)
 
 
 @app.route('/books')
@@ -52,7 +93,39 @@ def books():
 
 @app.route('/authors')
 def authors():
-    return render_template("authors.html")
+    # Fetch all authors from the database
+    all_authors = Author.query.all()
+    return render_template("authors.html", authors=all_authors)
+
+
+@app.route('/authors/add', methods=['GET', 'POST'])
+def add_author():
+    if request.method == 'POST':
+        name = request.form['name']
+        surname = request.form['surname']
+        bio = request.form['bio']
+
+        # Create the author
+        new_author = Author(name=name, surname=surname, bio=bio)
+
+        try:
+            db.session.add(new_author)
+            db.session.commit()
+
+            flash('Author added successfully!')
+            return redirect(url_for('add_author'))
+
+        except Exception as e:
+            flash(f'Error adding author: {str(e)}')
+            return redirect(url_for('add_author'))
+
+    all_books = Book.query.all()
+    return render_template("add_author.html")
+
+
+@app.route('/')
+def homepage():
+    return render_template("index.html")
 
 
 @app.route('/books/<int:book_id>', methods=['GET', 'POST'])

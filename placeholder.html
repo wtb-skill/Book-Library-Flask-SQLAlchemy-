@@ -1,12 +1,36 @@
-        <div class="mb-3">
-            <label for="authors" class="form-label">Authors</label>
-            <select multiple class="form-select" id="authors" name="authors[]" required>
-                {% for author in all_authors %}
-                    {% if author in book.authors %}
-                        <option value="{{ author.id }}" selected>{{ author.name }} {{ author.surname }}</option>
-                    {% else %}
-                        <option value="{{ author.id }}">{{ author.name }} {{ author.surname }}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
+<!-- Display added books -->
+{% for book in books %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ book.title }}</h5>
+            <p class="card-text">Description: {{ book.description }}</p>
+            <p class="card-text">Status: Available</p> {# assuming it's available #}
         </div>
+    </div>
+{% endfor %}
+
+
+OLD BOOK:
+
+{% extends "index.html" %}
+
+{% block content %}
+
+{% include "alert.html" %}
+
+<form method="POST" action="/books/add">
+
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+{% endblock %}
