@@ -8,7 +8,7 @@
 
 <div class="list-group">
   {% for author in authors %}
-    <a href="" class="list-group-item list-group-item-action">{{ author.name }} {{ author.surname }}</a>
+    <a href="{{ url_for('authors_details', author_id=author.id) }}" class="list-group-item list-group-item-action">{{ author.name }} {{ author.surname }}</a>
   {% endfor %}
 </div>
 

@@ -12,6 +12,7 @@
 
     <form method="POST">
 
+        <!-- Book details -->
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input type="text" class="form-control" id="title" name="title" value="{{ book.title }}" required>
@@ -22,6 +23,7 @@
             <textarea class="form-control" id="description" name="description" rows="3" required>{{ book.description }}</textarea>
         </div>
 
+        <!-- Status details -->
         <div class="mb-3">
             <label for="status" class="form-label">Status</label>
             <select class="form-select" id="status" name="status">
@@ -42,9 +44,22 @@
 
         <div class="mb-3" id="borrowedDateDetails">
             <label for="borrowed_date" class="form-label">Borrowed Date</label>
-            <input type="text" class="form-control" id="borrowed_date" name="borrowed_date" value="{{ book.status.borrowed_date }}" {% if book.status.available %} disabled {% endif %}>
+            <input type="text" class="form-control" id="borrowed_date" name="borrowed_date" value="{{ book.status.borrowed_date }}" {% if book.status.available %} disabled {% endif %} readonly>
         </div>
 
+        <!-- Author details -->
+        {% for author in book.authors %}
+            <div class="mb-3">
+                <label for="author_name{{ loop.index }}" class="form-label">Author Name</label>
+                <input type="text" class="form-control" id="author_name{{ loop.index }}" name="author_name{{ loop.index }}" value="{{ author.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="author_surname{{ loop.index }}" class="form-label">Author Surname</label>
+                <input type="text" class="form-control" id="author_surname{{ loop.index }}" name="author_surname{{ loop.index }}" value="{{ author.surname }}" required>
+            </div>
+        {% endfor %}
+
+        <!-- Button to commit changes -->
         <button type="submit" class="btn btn-primary">Save Changes</button>
 
         <script>

@@ -1,0 +1,43 @@
+{% extends "index.html" %}
+
+{% block head %}
+    <title>Author Details</title>
+{% endblock %}
+
+{% block content %}
+
+{% include "alert.html" %}
+
+    <h2>Author Details</h2>
+
+    <form method="POST">
+
+        <!-- Author details -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Author Name</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ author.name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="surname" class="form-label">Author Surname</label>
+            <input type="text" class="form-control" id="surname" name="surname" value="{{ author.surname }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="bio" class="form-label">Author Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="3" required>{{ author.bio }}</textarea>
+        </div>
+
+        <!-- Books associated with the author -->
+        {% for book in author.books %}
+            <div class="mb-3">
+                <label for="book_title{{ loop.index }}" class="form-label">Book Title</label>
+                <input type="text" class="form-control" id="book_title{{ loop.index }}" name="book_title{{ loop.index }}" value="{{ book.title }}" required>
+            </div>
+        {% endfor %}
+
+        <!-- Button to commit changes -->
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+
+    </form>
+    <a href="{{ url_for('authors') }}" class="btn btn-secondary">Back to Authors</a>
+{% endblock %}
+
