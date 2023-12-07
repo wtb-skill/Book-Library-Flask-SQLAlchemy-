@@ -1,9 +1,7 @@
 # app/routes.py
 
 from flask import render_template, request, redirect, url_for, flash
-from sqlalchemy import and_, or_, func
-from sqlalchemy.orm import aliased
-from sqlalchemy.sql.expression import null
+from sqlalchemy import and_
 from app import app, db
 from app.models import Book, Status, Author
 from datetime import datetime
@@ -73,31 +71,6 @@ def authors():
     # Fetch all authors from the database
     all_authors = Author.query.all()
     return render_template("authors.html", authors=all_authors)
-
-
-@app.route('/authors/add', methods=['GET', 'POST'])
-def add_author():
-    if request.method == 'POST':
-        name = request.form['name']
-        surname = request.form['surname']
-        bio = request.form['bio']
-
-        # Create the author
-        new_author = Author(name=name, surname=surname, bio=bio)
-
-        try:
-            db.session.add(new_author)
-            db.session.commit()
-
-            flash('Author added successfully!')
-            return redirect(url_for('add_author'))
-
-        except Exception as e:
-            flash(f'Error adding author: {str(e)}')
-            return redirect(url_for('add_author'))
-
-    all_books = Book.query.all()
-    return render_template("add_author.html")
 
 
 @app.route('/')
@@ -197,27 +170,20 @@ def authors_details(author_id):
                 existing_book = Book.query.filter_by(title=new_title).first()
 
                 if existing_book:
-                    print("EXISTING BOOK")
                     updated_book_ids.add(existing_book.id)
                     # Use the existing book for this author
                     if existing_book not in author.books:
                         author.books.append(existing_book)
                 else:
-                    print("ELSE BOOK")
-
                     # Create a new book and associate with the author
                     new_book = Book(title=new_title, description="")
-                    print(new_book)
                     new_status = Status(available=True, borrower_name=None, borrowed_date=None)
                     db.session.add(new_book)
                     db.session.add(new_status)
                     author.books.append(new_book)
-                    # new_book.authors.append(author)
                     new_book.status = new_status
                     db.session.commit()
                     updated_book_ids.add(new_book.id)
-
-                    print(updated_book_ids)
 
         # Remove books that were associated previously but not present now
         books_to_remove = [book for book in author.books if book.id not in updated_book_ids]

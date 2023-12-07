@@ -14,18 +14,18 @@
 
         <!-- Book details -->
         <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
+            <label for="title" class="form-label">Book Title</label>
             <input type="text" class="form-control" id="title" name="title" value="{{ book.title }}" required>
         </div>
 
         <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label">Book Description</label>
             <textarea class="form-control" id="description" name="description" rows="3" required>{{ book.description }}</textarea>
         </div>
 
         <!-- Status details -->
         <div class="mb-3">
-            <label for="status" class="form-label">Status</label>
+            <label for="status" class="form-label">Book Status</label>
             <select class="form-select" id="status" name="status">
                 {% if book.status.available %}
                     <option value="available" selected>Available</option>

@@ -13,7 +13,7 @@ def create_all_tables():
 
 
 if __name__ == "__main__":
-    """DELETE ALL DATA FROM THE DB"""
+    """DELETE ALL DATA FROM THE DB  /// DEVELOPMENT TOOL"""
     drop_all_tables()
     create_all_tables()
 
