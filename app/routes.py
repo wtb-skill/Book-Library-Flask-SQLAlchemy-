@@ -1,6 +1,7 @@
 # app/routes.py
 
 from flask import render_template, request, redirect, url_for, flash
+from sqlalchemy import and_
 from app import app, db
 from app.models import Book, Status, Author
 from datetime import datetime
@@ -22,7 +23,6 @@ def add_book():
             db.session.add(new_status)
 
             # Loop through form data to get author information
-            authors = []
             for key in request.form.keys():
                 if key.startswith('name'):
                     author_num = key.replace('name', '')
@@ -30,13 +30,17 @@ def add_book():
                     surname = request.form[f'surname{author_num}']
                     bio = request.form[f'bio{author_num}']
 
-                    # Create author objects
-                    author = Author(name=name, surname=surname, bio=bio)
-                    authors.append(author)
-                    db.session.add(author)
+                    # Check if the author already exists
+                    existing_author = Author.query.filter(and_(Author.name == name, Author.surname == surname)).first()
 
-                    # Associate the author with the new_book
-                    new_book.authors.extend(authors)
+                    if existing_author:
+                        # Use the existing author
+                        new_book.authors.append(existing_author)
+                    else:
+                        # Create a new author
+                        new_author = Author(name=name, surname=surname, bio=bio)
+                        db.session.add(new_author)
+                        new_book.authors.append(new_author)
 
             # Set the status of the new_book
             new_book.status = new_status
@@ -52,35 +56,6 @@ def add_book():
             return redirect(url_for('add_book'))
 
     return render_template("add_book.html")
-
-
-# OLD
-# @app.route('/books/add', methods=['GET', 'POST'])
-# def add_book():
-#     if request.method == 'POST':
-#         title = request.form['title']
-#         description = request.form['description']
-#
-#         # Create the book and status
-#         new_book = Book(title=title, description=description)
-#         new_status = Status(available=True, borrower_name=None, borrowed_date=None)
-#
-#         try:
-#             db.session.add(new_book)
-#             db.session.add(new_status)
-#
-#             new_book.status = new_status
-#             db.session.commit()
-#
-#             flash('Book added successfully!')
-#             return redirect(url_for('add_book'))
-#
-#         except Exception as e:
-#             flash(f'Error adding book: {str(e)}')
-#             return redirect(url_for('add_book'))
-#
-#     all_books = Book.query.all()
-#     return render_template("add_book.html", books=all_books)
 
 
 @app.route('/books')
